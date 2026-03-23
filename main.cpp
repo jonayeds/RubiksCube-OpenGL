@@ -14,7 +14,7 @@ static int stacks = 16;
 float degreeX = 0;
 float degreeY = 0;
 float degreeZ = 0;
-float scale = 0.1;
+float scale = 0.5;
 
 /* GLUT callback Handlers */
 
@@ -81,6 +81,7 @@ void Quads(int x, int y, int z)
     glVertex3f(x,max_y,z);
     glVertex3f(x,max_y,max_z);
     glVertex3f(max_x,max_y,max_z);
+
     glEnd();
 
 
@@ -95,11 +96,12 @@ static void display(void)
 
 
     glPushMatrix();
-        glTranslated(0,0,-7);
-        glRotated(degreeX,0.5,0,0);
-        glRotated(degreeY,0,.5,0);
-        glRotated(degreeZ,0,0,.5);
-        glScalef(scale,scale,scale);
+        glTranslated(0, 0, -7);
+        glRotated(degreeX, 1.0, 0.0, 0.0);
+        glRotated(degreeY, 0.0, 1.0, 0.0);
+        glRotated(degreeZ, 0.0, 0.0, 1.0);
+        glScalef(scale, scale, scale);
+        glTranslated(-1.5, -1.5, -1.5);  
         // Quads(0,0,0);
         for (int i=0;i<3;i++){
             for (int j=0;j<3;j++){
@@ -159,8 +161,6 @@ static void key(unsigned char key, int x, int y)
             }
             break;
         }
-        
-    cout << slices << " " << stacks << " " << scale << endl;
     glutPostRedisplay();
 }
 
