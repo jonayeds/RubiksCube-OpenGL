@@ -9,8 +9,6 @@
 #include <iostream>
 using namespace std;
 
-static int slices = 16;
-static int stacks = 16;
 float degreeX = 0;
 float degreeY = 0;
 float degreeZ = 0;
@@ -83,8 +81,6 @@ void Quads(int x, int y, int z)
     glVertex3f(max_x,max_y,max_z);
 
     glEnd();
-
-
 }
 static void display(void)
 {
@@ -102,7 +98,6 @@ static void display(void)
         glRotated(degreeZ, 0.0, 0.0, 1.0);
         glScalef(scale, scale, scale);
         glTranslated(-1.5, -1.5, -1.5);  
-        // Quads(0,0,0);
         for (int i=0;i<3;i++){
             for (int j=0;j<3;j++){
                 for (int k=0;k<3;k++){
@@ -153,14 +148,34 @@ static void key(unsigned char key, int x, int y)
             break;
 
         case 'm':
-            if (slices>3 && stacks>3)
-            {
-                slices--;
-                stacks--;
-                scale+=0.05;
-            }
-            break;
+        if (scale<2.0){
+            scale+=0.05;
         }
+            break;
+        case 'n':
+        if (scale>0.1){
+            scale-=0.05;    
+        }
+        }
+    glutPostRedisplay();
+}
+
+
+void specialKey(int key, int x, int y) {
+    switch (key) {
+        case GLUT_KEY_LEFT:
+            glTranslated(-0.05, 0, 0); 
+            break;
+        case GLUT_KEY_RIGHT:
+            glTranslated(0.05, 0, 0);
+            break;
+        case GLUT_KEY_UP:    
+            glTranslated(0, 0.05, 0);   
+            break;
+        case GLUT_KEY_DOWN:
+            glTranslated(0, -0.05, 0);
+            break;
+    }
     glutPostRedisplay();
 }
 
@@ -169,15 +184,15 @@ static void idle(void)
     glutPostRedisplay();
 }
 
-const GLfloat light_ambient[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
-const GLfloat light_diffuse[]  = { 1.0f, 1.0f, 1.0f, 1.0f };
-const GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-const GLfloat light_position[] = { 2.0f, 5.0f, 5.0f, 0.0f };
+// const GLfloat light_ambient[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
+// const GLfloat light_diffuse[]  = { 1.0f, 1.0f, 1.0f, 1.0f };
+// const GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+// const GLfloat light_position[] = { 2.0f, 5.0f, 5.0f, 0.0f };
 
-const GLfloat mat_ambient[]    = { 0.7f, 0.7f, 0.7f, 1.0f };
-const GLfloat mat_diffuse[]    = { 0.8f, 0.8f, 0.8f, 1.0f };
-const GLfloat mat_specular[]   = { 1.0f, 1.0f, 1.0f, 1.0f };
-const GLfloat high_shininess[] = { 100.0f };
+// const GLfloat mat_ambient[]    = { 0.7f, 0.7f, 0.7f, 1.0f };
+// const GLfloat mat_diffuse[]    = { 0.8f, 0.8f, 0.8f, 1.0f };
+// const GLfloat mat_specular[]   = { 1.0f, 1.0f, 1.0f, 1.0f };
+// const GLfloat high_shininess[] = { 100.0f };
 
 /* Program entry point */
 
@@ -193,9 +208,10 @@ int main(int argc, char *argv[])
     glutReshapeFunc(resize);
     glutDisplayFunc(display);
     glutKeyboardFunc(key);
+    glutSpecialFunc(specialKey);
     glutIdleFunc(idle);
 
-    glClearColor(1,1,1,1);
+    glClearColor(0.4,0.4,0.4,1);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
