@@ -1,0 +1,212 @@
+// #include<windows.h>
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
+#include <stdlib.h>
+#include <iostream>
+using namespace std;
+
+static int slices = 16;
+static int stacks = 16;
+float degreeX = 0;
+float degreeY = 0;
+float degreeZ = 0;
+float scale = 0.1;
+
+/* GLUT callback Handlers */
+
+static void resize(int width, int height)
+{
+    const float ar = (float) width / (float) height;
+
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glFrustum(-ar, ar, -1.0, 1.0, 2.0, 100.0);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity() ;
+}
+void Quads(int x, int y, int z)
+{
+    glBegin(GL_QUADS);
+    int max_x=x+1;
+    int max_y=y+1;
+    int max_z=z+1;
+    
+
+    // red front
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glVertex3f(x,max_y,z);
+    glVertex3f(max_x,max_y,z);
+    glVertex3f(max_x,y,z);
+    glVertex3f(x,y,z);
+
+    // yellow left
+    glColor3f(1.0f, 1.0f, 0.0f);
+    glVertex3f(x,max_y,max_z);
+    glVertex3f(x,max_y,z);
+    glVertex3f(x,y,z);
+    glVertex3f(x,y,max_z);
+
+    // blue back
+    glColor3f(0.0f, 0.0f, 1.0f);
+    glVertex3f(max_x,max_y,max_z);
+    glVertex3f(x,max_y,max_z);
+    glVertex3f(x,y,max_z);
+    glVertex3f(max_x,y,max_z);
+
+    // green right
+    glColor3f(0.0f, 1.0f, 0.0f);
+    glVertex3f(max_x,max_y,z);
+    glVertex3f(max_x,max_y,max_z);
+    glVertex3f(max_x,y,max_z);
+    glVertex3f(max_x,y,z);
+
+
+
+    // magenta bottom
+    glColor3f(1.0f, 0.0f, 1.0f);
+    glVertex3f(max_x,y,max_z);
+    glVertex3f(x,y,max_z);
+    glVertex3f(x,y,z);
+    glVertex3f(max_x,y,z);
+
+    // cyan top
+    glColor3f(0.0f, 1.0f, 1.0f);
+    glVertex3f(max_x,max_y,z);
+    glVertex3f(x,max_y,z);
+    glVertex3f(x,max_y,max_z);
+    glVertex3f(max_x,max_y,max_z);
+    glEnd();
+
+
+}
+static void display(void)
+{
+    const double t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
+    const double a = t*90.0;
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glColor3d(1,0,0);
+
+
+    glPushMatrix();
+        glTranslated(0,0,-7);
+        glRotated(degreeX,0.5,0,0);
+        glRotated(degreeY,0,.5,0);
+        glRotated(degreeZ,0,0,.5);
+        glScalef(scale,scale,scale);
+        // Quads(0,0,0);
+        for (int i=0;i<3;i++){
+            for (int j=0;j<3;j++){
+                for (int k=0;k<3;k++){
+                    Quads(i, j, k);
+                }
+            }
+        }
+
+    glPopMatrix();
+
+    glutSwapBuffers();
+}
+
+
+
+
+static void key(unsigned char key, int x, int y)
+{
+    switch (key)
+    {
+        case 27 :
+        case 'q':
+            exit(0);
+            break;
+
+        case 'a':
+            degreeX+=2.5;
+            break;
+
+        case 'b':
+            degreeX-=2.5;
+            break;
+
+        case 'c':
+            degreeY+=2.5;
+            break;
+
+        case 'd':
+            degreeY-=2.5;
+            break;
+
+        case 'e':
+            degreeZ+=2.5;
+            break;
+
+        case 'f':
+            degreeZ-=2.5;
+            break;
+
+        case 'm':
+            if (slices>3 && stacks>3)
+            {
+                slices--;
+                stacks--;
+                scale+=0.05;
+            }
+            break;
+        }
+        
+    cout << slices << " " << stacks << " " << scale << endl;
+    glutPostRedisplay();
+}
+
+static void idle(void)
+{
+    glutPostRedisplay();
+}
+
+const GLfloat light_ambient[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
+const GLfloat light_diffuse[]  = { 1.0f, 1.0f, 1.0f, 1.0f };
+const GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+const GLfloat light_position[] = { 2.0f, 5.0f, 5.0f, 0.0f };
+
+const GLfloat mat_ambient[]    = { 0.7f, 0.7f, 0.7f, 1.0f };
+const GLfloat mat_diffuse[]    = { 0.8f, 0.8f, 0.8f, 1.0f };
+const GLfloat mat_specular[]   = { 1.0f, 1.0f, 1.0f, 1.0f };
+const GLfloat high_shininess[] = { 100.0f };
+
+/* Program entry point */
+
+int main(int argc, char *argv[])
+{
+    glutInit(&argc, argv);
+    glutInitWindowSize(640,480);
+    glutInitWindowPosition(10,10);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+
+    glutCreateWindow("2023000000202");
+
+    glutReshapeFunc(resize);
+    glutDisplayFunc(display);
+    glutKeyboardFunc(key);
+    glutIdleFunc(idle);
+
+    glClearColor(1,1,1,1);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
+
+
+    glutMainLoop();
+
+    return EXIT_SUCCESS;
+}
+
+
