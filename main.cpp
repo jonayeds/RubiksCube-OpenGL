@@ -162,6 +162,8 @@ static void key(unsigned char key, int x, int y)
 
 
 void specialKey(int key, int x, int y) {
+    const int mods = glutGetModifiers();
+    const bool shift = mods == GLUT_ACTIVE_SHIFT;
     switch (key) {
         case GLUT_KEY_LEFT:
             glTranslated(-0.05, 0, 0); 
@@ -170,10 +172,20 @@ void specialKey(int key, int x, int y) {
             glTranslated(0.05, 0, 0);
             break;
         case GLUT_KEY_UP:    
+            if (shift) {
+                glTranslated(0, 0, -0.05);   
+            }
+            else {  
             glTranslated(0, 0.05, 0);   
+            }
             break;
         case GLUT_KEY_DOWN:
-            glTranslated(0, -0.05, 0);
+            if (shift) {
+                glTranslated(0, 0, 0.05);   
+            }
+            else {
+                glTranslated(0, -0.05, 0);
+            }
             break;
     }
     glutPostRedisplay();
@@ -184,20 +196,23 @@ static void idle(void)
     glutPostRedisplay();
 }
 
-// const GLfloat light_ambient[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
-// const GLfloat light_diffuse[]  = { 1.0f, 1.0f, 1.0f, 1.0f };
-// const GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-// const GLfloat light_position[] = { 2.0f, 5.0f, 5.0f, 0.0f };
-
-// const GLfloat mat_ambient[]    = { 0.7f, 0.7f, 0.7f, 1.0f };
-// const GLfloat mat_diffuse[]    = { 0.8f, 0.8f, 0.8f, 1.0f };
-// const GLfloat mat_specular[]   = { 1.0f, 1.0f, 1.0f, 1.0f };
-// const GLfloat high_shininess[] = { 100.0f };
-
-/* Program entry point */
-
 int main(int argc, char *argv[])
 {
+
+    cout << "------------- Keyboard Input -------------" << endl;
+    cout << "a: Rotate X-axis +2.5 degree" << endl; 
+    cout << "b: Rotate X-axis -2.5 degree" << endl; 
+    cout << "c: Rotate Y-axis +2.5 degree" << endl;
+    cout << "d: Rotate Y-axis -2.5 degree" << endl;     
+    cout << "e: Rotate Z-axis +2.5 degree" << endl;
+    cout << "f: Rotate Z-axis -2.5 degree" << endl; 
+    cout << "m: Scale up +0.05" << endl;
+    cout << "n: Scale down -0.05" << endl;
+    cout << "up/down arrow: Move up/down" << endl;
+    cout << "left/right arrow: Move left/right" << endl;
+    cout << "shift + up/down arrow: Move forward/backward" << endl;     
+    cout << "----------------------------------------" << endl;         
+
     glutInit(&argc, argv);
     glutInitWindowSize(640,480);
     glutInitWindowPosition(10,10);
@@ -218,7 +233,7 @@ int main(int argc, char *argv[])
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-
+    
 
     glutMainLoop();
 
