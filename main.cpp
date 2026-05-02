@@ -36,42 +36,43 @@ void Quads(float x, float y, float z)
     float max_z = z + 1.0f;
 
     // red front
-    glColor3f(1.0f, 0.0f, 0.0f);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glNormal3f(0.0f, 0.0f, -1.0f);
     glVertex3f(x, max_y, z);
     glVertex3f(max_x, max_y, z);
     glVertex3f(max_x, y, z);
     glVertex3f(x, y, z);
 
     // yellow left
-    glColor3f(1.0f, 1.0f, 0.0f);
+    glNormal3f(-1.0f, 0.0f, 0.0f);
     glVertex3f(x, max_y, max_z);
     glVertex3f(x, max_y, z);
     glVertex3f(x, y, z);
     glVertex3f(x, y, max_z);
 
     // blue back
-    glColor3f(0.0f, 0.0f, 1.0f);
+    glNormal3f(0.0f, 0.0f, 1.0f);
     glVertex3f(max_x, max_y, max_z);
     glVertex3f(x, max_y, max_z);
     glVertex3f(x, y, max_z);
     glVertex3f(max_x, y, max_z);
 
     // green right
-    glColor3f(0.0f, 1.0f, 0.0f);
+    glNormal3f(1.0f, 0.0f, 0.0f);
     glVertex3f(max_x, max_y, z);
     glVertex3f(max_x, max_y, max_z);
     glVertex3f(max_x, y, max_z);
     glVertex3f(max_x, y, z);
 
     // magenta bottom
-    glColor3f(1.0f, 0.0f, 1.0f);
+    glNormal3f(0.0f, -1.0f, 0.0f);
     glVertex3f(max_x, y, max_z);
     glVertex3f(x, y, max_z);
     glVertex3f(x, y, z);
     glVertex3f(max_x, y, z);
 
     // cyan top
-    glColor3f(0.0f, 1.0f, 1.0f);
+    glNormal3f(0.0f, 1.0f, 0.0f);
     glVertex3f(max_x, max_y, z);
     glVertex3f(x, max_y, z);
     glVertex3f(x, max_y, max_z);
@@ -85,10 +86,21 @@ static void display(void)
     const double a = t * 90.0;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
     glColor3d(1, 0, 0);
 
     glPushMatrix();
     glTranslated(0, 0, -7);
+
+    GLfloat light_position[] = { -2.0f, 2.0f, 2.0f, 1.0f };
+    GLfloat light_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    GLfloat light_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+
+
     glRotated(degreeX, 1.0, 0.0, 0.0);
     glRotated(degreeY, 0.0, 1.0, 0.0);
     glRotated(degreeZ, 0.0, 0.0, 1.0);
@@ -233,12 +245,18 @@ int main(int argc, char *argv[])
     glutSpecialFunc(specialKey);
     glutIdleFunc(idle);
 
-    glClearColor(0.4, 0.4, 0.4, 1);
+    glClearColor(0, 0, 0, 1);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_NORMALIZE);
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
     glutMainLoop();
 
