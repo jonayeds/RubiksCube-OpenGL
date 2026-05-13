@@ -7,6 +7,8 @@
 
 #include <stdlib.h>
 #include <iostream>
+#include <math.h>
+
 using namespace std;
 
 float degreeX = 0;
@@ -80,36 +82,18 @@ void Quads(float x, float y, float z)
 
     glEnd();
 }
-static void display(void)
-{
-    const double t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
-    const double a = t * 90.0;
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-    glColor3d(1, 0, 0);
+static void rubiks_cube()
+{
 
     glPushMatrix();
-    glTranslated(0, 0, -7);
 
-    GLfloat light_position[] = { -2.0f, 2.0f, 2.0f, 1.0f };
-    GLfloat light_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    GLfloat light_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-
-
-    glRotated(degreeX, 1.0, 0.0, 0.0);
-    glRotated(degreeY, 0.0, 1.0, 0.0);
-    glRotated(degreeZ, 0.0, 0.0, 1.0);
-    glScalef(scale, scale, scale);
     const float gap = 0.1f;
     const float step = 1.0f + gap;
     const float span = 3.0f * 1.0f + 2.0f * gap;
     const float base = -span / 2.0f;
     glTranslated(base, base, base);
+
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
@@ -122,6 +106,103 @@ static void display(void)
     }
 
     glPopMatrix();
+}
+
+static void sphare()
+{
+    glPushMatrix();
+    glTranslatef(3.5, 0, 0);
+    glutSolidSphere(1.5, 30, 30);
+    glPopMatrix();
+}
+
+static void circle(float z = 0, float radius = 1, bool is_top = true)
+{
+    glBegin(GL_POLYGON);
+    glNormal3f(0, 0, is_top ? -1 : 1);
+    for (int i = 0; i < 360; i++)
+    {
+        float theta = 2 * 3.1416 * i / 360;
+        float x = cos(theta);
+        float y = sin(theta);
+        glVertex3f(x * radius, y * radius, z);
+    }
+    glEnd();
+}
+
+static void cylinder()
+{
+    glPushMatrix();
+
+    glTranslatef(-3, 0, 0);
+    circle(-1, 0.5);
+    circle(1, 0.5, false);
+    glBegin(GL_QUAD_STRIP);
+    for (int i = 0; i <= 360; i++)
+    {
+        float theta = 2 * 3.1416 * i / 360;
+        float x = cos(theta);
+        float y = sin(theta);
+        glColor3f(1, 1, 1);
+        glNormal3f(x, y, 0);
+        glVertex3f(x * 0.5, y * 0.5, 1);
+        glVertex3f(x * 0.5, y * 0.5, -1);
+    }
+    glEnd();
+    glPopMatrix();
+}
+
+static void display(void)
+{
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+    glColor3d(1, 0, 0);
+
+    glTranslated(0, 0, -7);
+
+    GLfloat light_position1[] = {-2.0f, 2.0f, 2.0f, 1.0f};
+    GLfloat light_diffuse1[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    GLfloat light_ambient1[] = {0.2f, 0.2f, 0.2f, 1.0f};
+    GLfloat light_specular1[] = {1, 1, 1, 1.0f};
+    
+    GLfloat light_position2[] = {2.0f, 2.0f, 2.0f, 1.0f};
+    GLfloat light_diffuse2[] = {1.0f, 1.0f, 0.0f, 1.0f};
+    GLfloat light_ambient2[] = {0.2f, 0.2f, 0.0f, 1.0f};
+    GLfloat light_specular2[] = {1, 1, 1, 1.0f};
+
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position1);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse1);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient1);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular1);
+
+
+    glLightfv(GL_LIGHT1, GL_POSITION, light_position2);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse2);
+    glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient2);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular2);
+
+
+    glRotated(degreeX, 1.0, 0.0, 0.0);
+    glRotated(degreeY, 0.0, 1.0, 0.0);
+    glRotated(degreeZ, 0.0, 0.0, 1.0);
+    glScalef(scale, scale, scale);
+
+    glDisable(GL_COLOR_MATERIAL);
+    const GLfloat mat_ambient4[] = {0.5f, 0.5f, 0.5f, 1.0f};
+    const GLfloat mat_diffuse4[] = {0.5f, 0.5f, 0.5f, 0.6f};
+    const GLfloat mat_specular4[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    const GLfloat high_shininess4[] = {100.0f};
+    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient4);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse4);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular4);
+    glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess4);
+
+    rubiks_cube();
+    sphare();
+    cylinder();
+
+    glEnable(GL_COLOR_MATERIAL);
 
     glutSwapBuffers();
 }
@@ -170,6 +251,18 @@ static void key(unsigned char key, int x, int y)
         {
             scale -= 0.05;
         }
+    case '0':
+        glDisable(GL_LIGHT0);
+        break;
+    case '1':
+        glEnable(GL_LIGHT0);
+        break;
+    case '7':
+        glDisable(GL_LIGHT1);
+        break;
+    case '8':
+        glEnable(GL_LIGHT1);
+        break;
     }
     glutPostRedisplay();
 }
@@ -245,17 +338,16 @@ int main(int argc, char *argv[])
     glutSpecialFunc(specialKey);
     glutIdleFunc(idle);
 
-    glClearColor(0, 0, 0, 1);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    glClearColor(0.3, 0.3, 0.3, 1);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    glEnable(GL_NORMALIZE);
+    glEnable(GL_LIGHT1);
     glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_NORMALIZE);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
     glutMainLoop();
